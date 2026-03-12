@@ -64,6 +64,25 @@ void bubbleSort(int *v, int n) {
     }
 }
 
+void bubSort_Professor( int *v, int n) {
+    //Versão do professor
+    int i, aux, swap;
+    
+    do {
+        swap = 0;
+        
+        for(i = 0; i <n-1-i;i++) {
+            if(v[i] < v[i + 1]) {
+                aux = v[i];
+                v[i] = v[i + 1];
+                v[i + 1] = aux;
+                swap = 1;
+            }
+        }
+        
+    } while(swap);
+}
+
 void insertionSort(int *v, int n) {
     for (int i = 1; i < n; i++) {
         
@@ -83,19 +102,32 @@ void insertionSort(int *v, int n) {
     }
 }
 
+void insSort_Professor(int *v, int n) {
+    //Versão do professor
+    int i, j, aux;
+    
+    for(i =0; i <n; i++) {
+        aux = v[i];
+        for(int j = 0; (j>0) && (aux < v[j - 1]);j--) {
+            v[j] = v[j - 1];
+        }
+        v[j] = aux;
+    }
+}
+
 
 int main()
 {
     int numeros[7] = {7,4,6,9,8,2,1};
-    printf("|> ");
+    printf("v Array Original > ");
     for(int i = 0; i < 7; i++) {
         printf("%d ",numeros[i]);
     }
     
-    printf("\n|> ");
+    printf("\n| selection Sort > ");
     selectionSort(numeros, 7);
     
-    printf("\n| bubble sort > ");
+    printf("\n| bubble sort    > ");
     bubbleSort(numeros,7);
     
     printf("\n| insertion sort > ");
