@@ -44,3 +44,65 @@ int main()
     return 0;
 }
 ```
+
+# Resolução
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+void imprimirV(int *v, int n) {
+    printf("Vetor %p:",v);
+    for(int i; i<n; i++) {
+        printf(" %d |",v[i]);
+    }
+    printf("\n");
+}
+
+void mergeSort(int *v, int inicio,int fim) {
+    int meio;
+    if(inicio<fim){
+        meio = floor((inicio+fim)/2);
+        mergeSort(v,inicio,meio);
+        mergeSort(v,meio+1,fim);
+        merge(v,inicio,meio,fim);
+    }
+}
+
+void merge(int *v,int inicio, int meio, int fim) {
+    int *temp, i, j, k, n, p1, p2, fim1=0, fim2=0;
+    n = fim - inicio + 1;
+    p1 = inicio;
+    p2 = meio + 1;
+    temp = (int) malloc(n * sizeof(int));
+    if(temp != NULL) {
+        for(i = 0; i<n; i++){
+            if(!fim1 && !fim2) {//se nenhum chegou ao fim
+                if(v[p1]<v[p2]) {
+                    temp[i] = v[p1++];
+                    
+                }
+                else {
+                    temp[i] = v[p2++];
+                }
+            } else{//se um dos vetores chegou ao fim 
+                if(!fim1){temp[i] = v[p1++];}
+                else{temp[i] = v[p2++];}
+            }
+        }
+        for(j=0, k=inicio; j<n; j++, k++) {
+        v[k] = temp[j];
+        }
+    }
+   free(temp); 
+}
+
+
+int main()
+{
+    int v[9] = {0,2,5,8,1,6,9,7,3};
+    imprimirV(v, 9);
+    mergeSort(v, 0, 8);
+    return 0;
+}
+```
