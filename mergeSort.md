@@ -45,7 +45,7 @@ int main()
 }
 ```
 
-# Resolução
+## Resolução
 ```c
 #include <stdio.h>
 #include <math.h>
