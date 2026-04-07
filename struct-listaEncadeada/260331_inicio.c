@@ -11,7 +11,7 @@ typedef struct *cel Lista;
 Lista* criar_Lista() {
     Lista *li = (Lista*) malloc(sizeof(Lista));
     if(li != NULL) {
-        *li == NULL;
+        *li = NULL;
     }
     return li;
 }
