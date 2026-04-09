@@ -39,15 +39,14 @@ Lista* criar_lista(){
 }
 
 int insere_lista_fim(Lista *lista, int x){
-    if(lista == NULL) {
-        return 0;
+    if(lista == NULL) {return 0;}
+    cel *aux = (cel*) malloc(sizeof(cel));
+    if(aux == NULL) {return 0;}
+    aux -> conteudo = x;
+    aux -> seg = NULL;
+    if((*lista) == NULL) {
+        *lista = aux; 
     } else {
-        cel *aux = (cel*) malloc(sizeof(cel));
-        if(aux != NULL) {return 0;}
-        aux -> conteudo = x;
-        aux -> seg = NULL;
-        if(*lista == NULL) {*lista = aux;} 
-        else {
             cel *tmp;
             tmp = *lista;
             
@@ -57,8 +56,8 @@ int insere_lista_fim(Lista *lista, int x){
             tmp->seg = aux;
         }
         return 1;
-    }
 }
+
 
 int main()
 {
