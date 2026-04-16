@@ -8,6 +8,8 @@ typedef struct cel{
 
 typedef struct cel* Lista;
 
+typedef struct cel* ListaDup;
+
 /** FUNÇÕES ************************************************************/
 void print_lista(Lista* lista) {
     if(lista == NULL) {
@@ -25,7 +27,7 @@ void print_lista(Lista* lista) {
     do {
         printf(" %d |",temp->conteudo);
         temp = temp->seg; //temp recebe o proximo endereço para avançar no loop
-    } while(temp->seg != NULL);
+    } while(temp != NULL);
     
     printf("\n");
 }
@@ -117,37 +119,50 @@ int remover(Lista *lista, int x) {
     cel *temp;
     
     for(aux = *lista; aux!=NULL; aux = aux->seg) {
-        
-        if(aux->conteudo = x) {
-            if (aux->seg == NULL) {
+        if(aux->conteudo == x) {
+            if (aux == *lista) {
+                *lista = (*lista)->seg;
                 free(aux);
                 return 1;
             }
-            if (temp == NULL) {
-                temp = aux;
-                *lista = temp;
-                free(aux);
-                return 1;
-            }
-            temp = aux->seg;
-            *lista = temp;
+            temp->seg = aux->seg;
             free(aux);
             return 1;
         }
+        //o temp antes de qualquer atribuição NÃO OBRIGATORIAMENTE é nulo. Isso quebrou a verificação de primeiro elemento.
         temp = aux;
     }
+    free(aux);
     return 0;
+}
+
+int removerLista(Lista *lista) {
+    if (lista == NULL) {return 0;}
+    if (*lista == NULL) {return 0;}
+    cel *aux;
+    while(*lista != NULL) {
+        aux = *lista;
+        *lista = (*lista)->seg;
+        free(aux);
+        print_lista(lista);
+    }
+    free(lista);
+    return 1;
 }
 
 int main()
 {
-    //receber os parametros
-    //verif se a Lista existe;
-    //verif se a Lista esta vazia;
-    //criar nó/célula;
-    
-    //se a lista está vazia, o novo conteudo dela será o endereço do nó;
-    
+    /** ESSENCIAL DA LISTA ENCADEADA **************************************************************************************************************************************************
+    # VITAL
+    - receber os parametros
+    - verif se a Lista existe;
+    - verif se a Lista esta vazia;
+
+    # MOVIMENTO
+    - criar nó/célula;
+    - se a lista está vazia, o novo conteudo dela será o endereço do nó;
+    ***********************************************************************************************************************************************************************************/
+        
     Lista *lst;
     lst = criar_lista();
     
@@ -163,7 +178,10 @@ int main()
     buscar(lst, 4);
     //printf(countCadeia(lst));
     printf("\nContador: %d", countCadeia(lst));
-    printf("\nRemoção: %d",remover(lst, 3));
+    printf("\nRemoção: %d", remover(lst, 6));
     print_lista(lst);
+    
+    printf("\n%d", removerLista(lst));
+    
     return 0;
 }
