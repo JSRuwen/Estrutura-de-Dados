@@ -37,7 +37,7 @@
 
 # Lista Duplamente Encadeada
 - tipo de "lista" onde cada elemento aponta para um sucessor da "lista" e para um antecessor
-
+- Códigos de exemplo [aqui](https://github.com/JSRuwen/Estrutura-de-Dados/blob/main/struct-listaEncadeada/20260416_lista-duplamente-encadeada.c)
 # Lista Encadeada com Cabeça
 - 
 
