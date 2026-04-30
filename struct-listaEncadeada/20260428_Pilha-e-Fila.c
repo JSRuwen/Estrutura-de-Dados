@@ -39,12 +39,46 @@ void print_lista(Lista* lista) {
     printf("\n");
 }
 
-Lista* criar_lista(){
-    Lista *li = (Lista*) malloc(sizeof(Lista));
-    if(li!=NULL) {
-        *li=NULL;
+Pilha* criar_pilha(){
+    Lista *pi = (Pilha*) malloc(sizeof(Pilha));
+    if(pi!=NULL) {
+        *pi=NULL;
     }
-    return li;
+    return pi;
+}
+
+Fila* criar_fila() {
+    Fila *fi = (Fila*) malloc(sizeof(Fila));
+    if(fi!=NULL) {
+        fi->fim = NULL;
+        fi->inicio = NULL;
+        fi->qtd = 0;
+    }
+    return fi;
+}
+
+void free_pilha(Pilha* pilha) {
+    if(pilha!=NULL) {
+        Elem* aux;
+        while(*pilha!=NULL) {
+            aux = *pilha;
+            *pilha = (*pilha) -> seg;
+            free(aux);
+        }
+    free(pilha);
+    }
+}
+
+void free_fila(Fila* fila) {
+    if(fila->inicio!=NULL) {
+        Elem* no;
+        while(*fila!=NULL) {
+            no = fila->seg;
+            fila->inicio = fila->inicio->seg;
+            free(no);
+        }
+    free(fila);
+    }
 }
 
 int insere_lista_inicio(Lista *lista, int x){
@@ -59,38 +93,76 @@ int insere_lista_inicio(Lista *lista, int x){
     return 1;
 }
 
-Elem* mostrar_topo_pilha(Pilha *pilha) {
-    if (pilha == NULL) {return NULL;}
-    if (*pilha == NULL) {return NULL;}
+int* mostrar_topo_pilha(Pilha *pilha) {
+    if (pilha == NULL) {return -1;}
+    if ((*pilha) == NULL) {return -1;}
 
-    return *pilha;
+    return (*pilha)->conteudo;
 }
 
-Elem* push_pilha(Pilha *pilha, int x) {
-    if (pilha == NULL) {return NULL;}
-    if (*pilha == NULL) {return NULL;}
-    Elem *aux;
+int push_pilha(Pilha *pilha, int x) {
+    if (pilha == NULL) {return -1;}
+    Elem *aux = (Elem*) malloc(sizeof(Elem));
+    if (aux == NULL) {return 0;}
     
     aux -> conteudo = x;
-    aux -> seg = *lista;
+    aux -> seg = (*pilha);
     
     *pilha = aux;
     
-    return pilha;
+    return 1;
 }
 
-Elem* pop_pilha(Pilha *pilha) {
-    if (pilha == NULL) {return NULL;}
-    if (*pilha == NULL) {return NULL;}
+int pop_pilha(Pilha *pilha) {
+    if (pilha == NULL) {return -1;}
+    if ((*pilha) == NULL) {return -1;}
     Elem *aux;
     
     aux = *pilha;
-    *pilha = pilha->seg;
+    *pilha = (*pilha)->seg;
     
-    return aux;
+    free(aux);
+    
+    return 1;
 }
 
+int enqueue_fila(Fila *fila, int x) {
+    if (fila == NULL) {return -1;}
+    Elem no = (Elem*) malloc (sizeof(Elem));
+    if(no == NULL) {return 0;}
+    //if ((*fila) == NULL) { fila -> fim = no; fila->inicio = no;}
+    
+    no->conteudo = x;
+    no->seg = NULL;
+    
+    if(fila->inicio == NULL) {
+        fila ->inicio = no;
+    }
+    
+    fila -> fim -> seg = no;
+    fila -> fim = no;
+    fila->qtd++;
+    
+    return 1;
+}
 
+int dequeue_fila(Fila *fila) {
+    if (fila == NULL) {return -1;}
+    if (fila->inicio == NULL) {return -1;}
+    
+    Elem *no = fila->inicio;
+    
+    (*fila)->inicio = (*fila)->inicio->seg;
+    
+    if (fila->inicio == NULL) {
+        fila->fim = NULL;
+    }
+    
+    free(no);
+    
+    fila->qtd--;
+    return 1;
+}
 
 
 
@@ -103,8 +175,8 @@ int main()
     
     //se a lista está vazia, o novo conteudo dela será o endereço do nó;
     
-    Lista *lst;
-    lst = criar_lista();
+    Pilha *pil;
+    pil = criar_pilha();
     
     insere_lista_inicio(lst, 1);
     insere_lista_inicio(lst, 2);
