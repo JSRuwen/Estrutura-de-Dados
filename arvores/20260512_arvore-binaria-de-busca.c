@@ -9,7 +9,43 @@ typedef struct no {
 
 typedef struct no* Arvore;
 
-/** FUNÇÕES ************************************************************/
+/* FUNÇÕES ************************************************************/
+
+/** IMPRESSÃO *********************************************************/
+// Função auxiliar recursiva 
+void imprime_NO(struct NO *no, const char *prefixo, int ehUltimo, char lado){
+  if(no == NULL){ return;}
+  printf("%s", prefixo);
+  if(ehUltimo){printf("└── ");
+  } else {printf("├── ");}
+  if(lado == 'E'){printf("E: ");
+  } else if(lado == 'D'){printf("D: ");}
+  printf("%d\n", no->info);
+  char novoPrefixo[1000];
+  snprintf(novoPrefixo,sizeof(novoPrefixo),"%s%s",prefixo,ehUltimo ? "    " : "│   ");
+  if(no->esq != NULL){
+    imprime_NO(no->esq, novoPrefixo, no->dir == NULL, 'E');
+  }
+  if(no->dir != NULL){
+    imprime_NO(no->dir, novoPrefixo, 1, 'D');
+  }
+}
+// Função principal de impressão
+void imprime_ArvBin(ArvBin *raiz){
+  if(raiz == NULL || *raiz == NULL){
+    printf("Árvore vazia.\n");
+    return;
+  }
+  printf("%d\n", (*raiz)->info);
+  if((*raiz)->esq != NULL){
+    imprime_NO((*raiz)->esq, "", (*raiz)->dir == NULL, 'E');
+  }
+  if((*raiz)->dir != NULL){
+    imprime_NO((*raiz)->dir, "", 1, 'D');
+  }
+}
+
+/** CRIAR ÁRVORE *********************************************************/
 Arvore* criar_arvore(){
     Arvore *tree = (Arvore*) malloc(sizeof(Arvore));
     if(tree!=NULL) {
@@ -18,6 +54,7 @@ Arvore* criar_arvore(){
     return tree;
 }
 
+/** INSERIR NÓ *********************************************************/
 int inserir(Arvore *tree, int x){ //Versão Funcional desenvolvida por mim
   if(tree == NULL) {return 0;}
   no *aux = (no*) malloc(sizeof(no));
@@ -61,6 +98,7 @@ int inserir(Arvore *tree, int x){ //Versão Funcional desenvolvida por mim
 return 1;
 }
 
+// Código feito pelo professor
 int inserir_vProfessor(Arvore *tree, int x) {
   if(tree == NULL) {return 0;}
   no *aux = (no*) malloc(sizeof(no));
@@ -97,6 +135,7 @@ int inserir_vProfessor(Arvore *tree, int x) {
   return 1;
 }
 
+/** BUSCAR NÓ *********************************************************/
 int buscar(Arvore *tree, int valor) {
     if(tree == NULL) {return 0;}
     no *aux = *tree;
@@ -110,6 +149,7 @@ int buscar(Arvore *tree, int valor) {
     return 0;
 }
 
+/** TOTAL DE NÓS *********************************************************/
 int totalNos(Arvore *tree) {
   if(tree == NULL) {return 0;}
   if(*tree == NULL) {return 0;} else {
@@ -124,53 +164,109 @@ int totalNos(Arvore *tree) {
   return no_esq+no_dir+1;
 }
 
+/** ALTURA DA ÁRVORE *********************************************************/
+int altura_arvore(Arvore *tree) {
+  if(tree == NULL) {return -1;}
+  if(*tree == NULL) {return -1;}
+  
+  int h_esq = altura_arvore(&((*tree)->esq));
+  int h_dir = altura_arvore(&((*tree)->dir));
 
-int countCadeia(Lista *lista) {
-    if(lista == NULL) {return 0;}
-    if(*lista == NULL) {return 0;}
-    cel *aux;
-    int count = 0;
-    for(aux = *lista; aux!=NULL; aux = aux->seg) {
-        count++; 
-    }
-    //printf(count);
-    return count;
+  if(h_esq>h_dir) {
+    return(h_esq+1);
+  } else {
+    return(h_dir+1);
+  }
+
+  return 1;
 }
 
-int remover(Lista *lista, int x) {
-    if(lista == NULL) {return 0;}
-    if(*lista == NULL) {return 0;}
-    cel *aux;
-    
-    for(aux = *lista; aux!=NULL; aux = aux->seg) {
-        if(aux->conteudo == x) {
-            if (aux == *lista) {
-                *lista = (*lista)->seg;
-                free(aux);
-                return 1;
+/** ORDEM EM ARVORE *********************************************************/
+void preOrdem_arvore(Arvore *tree) {
+  if(tree == NULL) {return;}
+  if(*tree !=NULL) {
+    printf("%d\t", (*tree)->conteudo);
+    preOrdem_arvore(&((*tree)->esq));
+    preOrdem_arvore(&((*tree)->dir));
+}
+
+void emOrdem_arvore(Arvore *tree) {
+  if(tree == NULL) {return;}
+  if(*tree !=NULL) {
+    emOrdem_arvore(&((*tree)->esq));
+    printf("%d\t", (*tree)->conteudo);
+    emOrdem_arvore(&((*tree)->dir));
+}
+
+void posOrdem_arvore(Arvore *tree) {
+  if(tree == NULL) {return;}
+  if(*tree !=NULL) {
+    posOrdem_arvore(&((*tree)->esq));
+    posOrdem_arvore(&((*tree)->dir));
+    printf("%d\t", (*tree)->conteudo);
+}
+
+
+/** REMOÇÃO *************************************************************/
+no* remove_atual(no *atual) {
+  no *no1, *no2;
+
+  if(atual->esq == NULL) {
+    no2 = atual->dir;
+    free(atual);
+    return no2;
+  }
+
+  no1 = atual;
+  no2 = atual->esq;
+
+  while (no2->dir != NULL) {
+    no1 = no2;
+    no2 = no2->dir;
+  }
+
+  if(no1 != atual) {
+    no1->dir = no2->esq;
+    no2->esq = atual->esq;
+  } 
+  
+  no2->dir = atual->dir;
+  free(atual);
+  
+  return no2;
+}
+
+int remover_ArvBin(Arvore *tree, int x) {
+    if(tree == NULL) {return 0;}
+    if(*tree == NULL) {return 0;}
+    no *atual = NULL;
+    no *ant = *tree;
+
+    while(atual!=NULL) {
+      if(valor == atual->conteudo) {
+          if(atual == *tree) {
+            *raiz = remove_atual(atual);
+          } else {
+            if(ant->dir == atual) {
+              ant->dir = remove_atual(atual);
+            } else {
+              ant->esq = remove_atual(atual);
             }
-            aux->ant = aux->seg;
-            free(aux);
-            return 1;
-        }
+      }
     }
-    free(aux);
-    return 0;
+      // andar na arvore
+      ant = atual;
+      if(x > atual->conteudo) {
+        atual = atual->dir;
+      } else {
+        atual = atual->esq;
+      }
+  }
+  return 0;
 }
 
-int removerLista(Lista *lista) {
-    if (lista == NULL) {return 0;}
-    if (*lista == NULL) {return 0;}
-    cel *aux;
-    while(*lista != NULL) {
-        aux = *lista;
-        *lista = (*lista)->seg;
-        free(aux);
-        print_lista(lista);
-    }
-    free(lista);
-    return 1;
-}
+// no_esq, ant = remover_ArvBin($((*tree)->esq), x);
+// no_dir, ant =
 
 int main() {
   
